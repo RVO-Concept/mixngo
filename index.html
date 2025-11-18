@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mix'n'GO -       R.V.O Concept</title>
+    <style>
+        /* Réinitialisation des marges et padding par défaut */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Style du corps de la page avec dégradé bleu foncé */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Conteneur principal centré avec largeur maximale */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* En-tête de la page avec titre et sous-titre */
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            padding: 20px;
+        }
+
+        header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        /* Grille responsive pour afficher les cartes de cocktails */
+        .cocktails-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 30px;
+            padding: 20px 0;
+        }
+
+        /* Style des cartes de cocktails individuelles */
+        .cocktail-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        /* Effet au survol des cartes */
+        .cocktail-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 50px rgba(0,0,0,0.7);
+        }
+
+        /* Zone d'image du cocktail */
+        .cocktail-image {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 4em;
+        }
+
+        /* Contenu de la carte (texte et informations) */
+        .cocktail-content {
+            padding: 20px;
+        }
+
+        /* En-tête de la carte avec nom et code */
+        .cocktail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        /* Nom du cocktail */
+        .cocktail-name {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        /* Badge avec le code du cocktail */
+        .cocktail-code {
+            background: #667eea;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        /* Section du niveau d'alcool */
+        .alcohol-level {
+            margin-bottom: 15px;
+        }
+
+        /* Label "Niveau d'alcool" avec police serif italique */
+        .alcohol-level-label {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 8px;
+            font-weight: 500;
+            text-transform: none;
+            letter-spacing: 0.3px;
+            font-family: 'Georgia', serif;
+            font-style: italic;
+        }
+
+        /* Conteneur pour les bouteilles d'alcool */
+        .bottles-container {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        /* Style d'une bouteille individuelle (inclinée de 10°) */
+        .bottle {
+            width: 20px;
+            height: 30px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transform: rotate(10deg);
+            transition: transform 0.2s ease;
+        }
+
+        /* Effet d'agrandissement au survol de la bouteille */
+        .bottle:hover {
+            transform: rotate(10deg) scale(1.15);
+        }
+
+        /* Bouchon de la bouteille */
+        .bottle-cap {
+            width: 6px;
+            height: 3px;
+            background: #333;
+            border-radius: 1px 1px 0 0;
+            margin-bottom: 1px;
+        }
+
+        /* Col de la bouteille */
+        .bottle-neck {
+            width: 8px;
+            height: 5px;
+            background: transparent;
+            border: 1px solid #333;
+            border-bottom: none;
+            border-radius: 1px 1px 0 0;
+        }
+
+        /* Corps principal de la bouteille */
+        .bottle-body {
+            width: 14px;
+            height: 20px;
+            background: transparent;
+            border: 1px solid #333;
+            border-radius: 0 0 4px 4px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Liquide à l'intérieur de la bouteille (gradient ambre/brun) */
+        .bottle-liquid {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 0;
+            background: linear-gradient(180deg, #f59e42 0%, #d67d3e 50%, #8b4513 100%);
+            transition: height 0.3s ease;
+        }
+
+        /* Bouteille pleine : le liquide remplit 100% */
+        .bottle.full .bottle-liquid {
+            height: 100%;
+        }
+
+        /* Bouteille pleine : le col est rempli de liquide */
+        .bottle.full .bottle-neck {
+            background: linear-gradient(180deg, #f59e42 0%, #d67d3e 100%);
+        }
+
+        /* Bouteille vide : pas de liquide */
+        .bottle.empty .bottle-liquid {
+            height: 0;
+        }
+
+        /* Étiquette blanche sur la bouteille */
+        .bottle-label {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 10px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid #333;
+            border-radius: 1px;
+            z-index: 1;
+        }
+
+        /* Section des ingrédients */
+        .ingredients {
+            margin-top: 15px;
+        }
+
+        /* Titre de la section ingrédients */
+        .ingredients h3 {
+            color: #667eea;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+        }
+
+        /* Liste des ingrédients sans puces par défaut */
+        .ingredients ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        /* Style de chaque ingrédient avec emoji cocktail */
+        .ingredients li {
+            padding: 5px 0;
+            color: #555;
+            position: relative;
+            padding-left: 20px;
+        }
+
+        /* Emoji cocktail avant chaque ingrédient */
+        .ingredients li:before {
+            content: "🍸";
+            position: absolute;
+            left: 0;
+        }
+
+        /* Barre de filtres pour trier les cocktails */
+        .filter-bar {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.5);
+        }
+
+        /* Conteneur des boutons de filtres */
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        /* Style des boutons de filtre */
+        .filter-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            background: #f0f0f0;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        /* Effet au survol des boutons */
+        .filter-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        /* Style du bouton actif */
+        .filter-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        /* Responsive pour mobiles et tablettes */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2em;
+            }
+
+            /* Une seule colonne sur mobile */
+            .cocktails-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            /* Boutons de filtre en colonne sur mobile */
+            .filter-buttons {
+                flex-direction: column;
+            }
+
+            .filter-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🍹 Mix'n'GO</h1>
+            <p>            R.V.O Concept</p>
+        </header>
+
+        <div class="filter-bar">
+            <div class="filter-buttons">
+                <button class="filter-btn active" onclick="filterCocktails('all')">Tous</button>
+                <button class="filter-btn" onclick="filterCocktails('vodka')">Vodka</button>
+                <button class="filter-btn" onclick="filterCocktails('tequila')">Tequila</button>
+                <button class="filter-btn" onclick="filterCocktails('rhum')">Rhum</button>
+                <button class="filter-btn" onclick="filterCocktails('gin')">Gin</button>
+                <button class="filter-btn" onclick="filterCocktails('whisky')">Whisky</button>
+                <button class="filter-btn" onclick="filterCocktails('multi')">Multimix</button>
+                <button class="filter-btn" onclick="filterCocktails('sans-alcool')">Sans Alcool</button>
+            </div>
+        </div>
+
+        <div class="cocktails-grid" id="cocktailsGrid"></div>
+    </div>
+
+    <script>
+        // Base de données des cocktails avec leurs propriétés
+        const cocktails = [
+            {
+                code: "100",
+                name: "Screwdriver",
+                ingredients: ["Vodka", "Jus d'orange"],
+                alcoholLevel: 2,
+                category: "vodka",
+                description: "Un grand classique, facile à préparer"
+            },
+            {
+                code: "105",
+                name: "Cosmopolitan",
+                ingredients: ["Vodka", "Triple sec", "Jus de cranberry", "Jus de citron vert"],
+                alcoholLevel: 3,
+                category: "vodka"
+            },
+            {
+                code: "110",
+                name: "Sex on the Beach",
+                ingredients: ["Vodka", "Triple sec", "Jus d'orange", "Jus de cranberry", "Jus d'ananas"],
+                alcoholLevel: 3,
+                category: "vodka"
+            },
+            {
+                code: "115",
+                name: "Sea Breeze",
+                ingredients: ["Vodka", "Jus de cranberry", "Jus d'ananas"],
+                alcoholLevel: 2,
+                category: "vodka"
+            },
+            {
+                code: "120",
+                name: "Bay Breeze",
+                ingredients: ["Vodka", "Jus de cranberry", "Jus d'orange"],
+                alcoholLevel: 2,
+                category: "vodka"
+            },
+            {
+                code: "125",
+                name: "Blue Lagoon",
+                ingredients: ["Vodka", "Curaçao bleu", "Jus de citron"],
+                alcoholLevel: 3,
+                category: "vodka",
+                description: "Un cocktail visuellement attrayant"
+            },
+            {
+                code: "200",
+                name: "Tequila Sunrise",
+                ingredients: ["Tequila", "Jus d'orange", "Sirop de grenadine"],
+                alcoholLevel: 2,
+                category: "tequila",
+                description: "Le sirop de grenadine se dépose au fond pour un effet de lever de soleil"
+            },
+            {
+                code: "205",
+                name: "Margarita",
+                ingredients: ["Tequila", "Triple sec", "Jus de citron vert"],
+                alcoholLevel: 3,
+                category: "tequila"
+            },
+            {
+                code: "210",
+                name: "Blue Margarita",
+                ingredients: ["Tequila", "Curaçao bleu", "Jus de citron vert"],
+                alcoholLevel: 3,
+                category: "tequila"
+            },
+            {
+                code: "300",
+                name: "Mojito Orange",
+                ingredients: ["Rhum blanc", "Jus de citron vert", "Sirop de sucre de canne", "Jus d'orange"],
+                alcoholLevel: 2,
+                category: "rhum"
+            },
+            {
+                code: "305",
+                name: "Daiquiri",
+                ingredients: ["Rhum blanc", "Jus de citron vert", "Sirop de sucre de canne"],
+                alcoholLevel: 3,
+                category: "rhum",
+                description: "La recette de base. Peut être servi frappé avec de la glace pilée"
+            },
+            {
+                code: "310",
+                name: "Hurricane",
+                ingredients: ["Rhum blanc", "Rhum brun", "Jus d'orange", "Jus d'ananas", "Jus de citron vert", "Sirop de grenadine"],
+                alcoholLevel: 3,
+                category: "rhum"
+            },
+            {
+                code: "315",
+                name: "Planter's Punch",
+                ingredients: ["Rhum brun", "Jus d'orange", "Jus d'ananas", "Jus de citron", "Sirop de sucre de canne", "Sirop de grenadine"],
+                alcoholLevel: 3,
+                category: "rhum"
+            },
+            {
+                code: "320",
+                name: "T-Punch",
+                ingredients: ["Rhum blanc", "Sirop de sucre de canne", "Jus d'ananas"],
+                alcoholLevel: 3,
+                category: "rhum"
+            },
+            {
+                code: "325",
+                name: "Cuba Libre",
+                ingredients: ["Rhum brun", "Cola", "Jus de citron vert"],
+                alcoholLevel: 2,
+                category: "rhum"
+            },
+            {
+                code: "330",
+                name: "Rhum Punch",
+                ingredients: ["Rhum blanc", "Rhum brun", "Jus d'orange", "Jus d'ananas", "Sirop de grenadine", "Sirop de sucre de canne"],
+                alcoholLevel: 2,
+                category: "rhum"
+            },
+            {
+                code: "400",
+                name: "Orange Blossom",
+                ingredients: ["Gin", "Jus d'orange"],
+                alcoholLevel: 2,
+                category: "gin"
+            },
+            {
+                code: "405",
+                name: "Amsterdam Cobbler",
+                ingredients: ["Gin", "Jus d'ananas", "Curaçao bleu"],
+                alcoholLevel: 2,
+                category: "gin"
+            },
+            {
+                code: "410",
+                name: "Blue Gin",
+                ingredients: ["Gin", "Curaçao bleu", "Jus de citron vert"],
+                alcoholLevel: 3,
+                category: "gin"
+            },
+            {
+                code: "415",
+                name: "Ananas Fizz",
+                ingredients: ["Gin", "Sirop de sucre de canne", "Jus d'ananas", "Jus de citron"],
+                alcoholLevel: 2,
+                category: "gin"
+            },
+            {
+                code: "420",
+                name: "Hawaiian",
+                ingredients: ["Gin", "Triple sec", "Jus d'ananas", "Curaçao bleu"],
+                alcoholLevel: 3,
+                category: "gin"
+            },
+            {
+                code: "500",
+                name: "Whisky",
+                ingredients: ["Whisky"],
+                alcoholLevel: 5,
+                category: "whisky"
+            },
+            {
+                code: "505",
+                name: "Whisky Sour",
+                ingredients: ["Whisky", "Jus de citron", "Sirop de sucre de canne"],
+                alcoholLevel: 3,
+                category: "whisky"
+            },
+            {
+                code: "510",
+                name: "Cranberry Cooler",
+                ingredients: ["Whisky", "Jus de cranberry", "Jus de citron", "Sirop de sucre de canne"],
+                alcoholLevel: 3,
+                category: "whisky"
+            },
+            {
+                code: "515",
+                name: "Southern Punch",
+                ingredients: ["Whisky", "Jus d'orange", "Jus d'ananas", "Sirop de grenadine", "Sirop de sucre de canne"],
+                alcoholLevel: 2,
+                category: "whisky"
+            },
+            {
+                code: "600",
+                name: "Paradise Blue",
+                ingredients: ["Vodka", "Rhum blanc", "Curaçao bleu", "Jus d'ananas"],
+                alcoholLevel: 2,
+                category: "multi"
+            },
+            {
+                code: "605",
+                name: "Tropical Sunrise",
+                ingredients: ["Vodka", "Rhum blanc", "Jus d'orange", "Sirop de grenadine"],
+                alcoholLevel: 2,
+                category: "multi"
+            },
+            {
+                code: "610",
+                name: "Exotic Breeze",
+                ingredients: ["Gin", "Vodka", "Jus d'ananas", "Jus de cranberry"],
+                alcoholLevel: 2,
+                category: "multi"
+            },
+            {
+                code: "615",
+                name: "Long Island Iced Tea",
+                ingredients: ["Gin", "Vodka", "Rhum blanc", "Tequila", "Triple sec", "Jus de citron", "Cola"],
+                alcoholLevel: 4,
+                category: "multi",
+                description: "Un cocktail fort avec de nombreux ingrédients"
+            },
+            {
+                code: "700",
+                name: "Tropical Sunrise",
+                ingredients: ["Jus d'orange", "Jus d'ananas", "Sirop de grenadine"],
+                alcoholLevel: 0,
+                category: "sans-alcool"
+            },
+            {
+                code: "705",
+                name: "Virgin Cuba Libre Twist",
+                ingredients: ["Cola", "Jus de citron vert", "Sirop de sucre de canne"],
+                alcoholLevel: 0,
+                category: "sans-alcool"
+            },
+            {
+                code: "710",
+                name: "Grenadine Fizz",
+                ingredients: ["Cola", "Sirop de grenadine", "Jus de citron"],
+                alcoholLevel: 0,
+                category: "sans-alcool"
+            },
+            {
+                code: "715",
+                name: "Pineapple Cooler",
+                ingredients: ["Jus d'ananas", "Jus de citron vert", "Sirop de sucre de canne"],
+                alcoholLevel: 0,
+                category: "sans-alcool"
+            },
+            {
+                code: "720",
+                name: "Sunset Cooler",
+                ingredients: ["Jus d'orange", "Jus de citron", "Sirop de grenadine"],
+                alcoholLevel: 0,
+                category: "sans-alcool"
+            },
+            {
+                code: "725",
+                name: "Virgin Caribbean Mix",
+                ingredients: ["Jus d'ananas", "Jus d'orange", "Jus de citron vert", "Sirop de sucre de canne"],
+                alcoholLevel: 0,
+                category: "sans-alcool"
+            },
+            {
+                code: "730",
+                name: "Cola Sunrise",
+                ingredients: ["Cola", "Jus d'orange", "Sirop de grenadine"],
+                alcoholLevel: 0,
+                category: "sans-alcool"
+            },
+            {
+                code: "735",
+                name: "Colibri Virgin",
+                ingredients: ["Jus d'ananas", "Jus d'orange", "Jus de citron", "Sirop de grenadine"],
+                alcoholLevel: 0,
+                category: "sans-alcool"
+            },
+            {
+                code: "740",
+                name: "Jus d'orange",
+                ingredients: ["Jus d'orange"],
+                alcoholLevel: 0,
+                category: "sans-alcool"
+            },
+            {
+                code: "745",
+                name: "Jus d'ananas",
+                ingredients: ["Jus d'ananas"],
+                alcoholLevel: 0,
+                category: "sans-alcool"
+            },
+            {
+                code: "750",
+                name: "Coca Cola",
+                ingredients: ["Cola"],
+                alcoholLevel: 0,
+                category: "sans-alcool"
+            },
+            /*{
+                code: "800",
+                name: "Mai Tai",
+                ingredients: ["Rhum blanc", "Rhum brun", "Triple sec", "Jus de citron vert", "Sirop d'orgeat"],
+                alcoholLevel: 4,
+                category: "multi",
+                description: "Cocktail du jour"
+            }*/
+        ];
+
+        /**
+         * Génère le HTML pour afficher les bouteilles d'alcool
+         * @param {number} level - Niveau d'alcool de 0 à 5
+         * @returns {string} HTML des bouteilles
+         */
+        function createBottles(level) {
+            let bottles = '';
+            // Crée 5 bouteilles, remplit celles jusqu'au niveau spécifié
+            for (let i = 1; i <= 5; i++) {
+                bottles += `
+                    <div class="bottle ${i <= level ? 'full' : 'empty'}">
+                        <div class="bottle-cap"></div>
+                        <div class="bottle-neck"></div>
+                        <div class="bottle-body">
+                            <div class="bottle-liquid"></div>
+                            <div class="bottle-label"></div>
+                        </div>
+                    </div>
+                `;
+            }
+            return bottles;
+        }
+
+        /**
+         * Crée le HTML d'une carte de cocktail
+         * @param {Object} cocktail - Objet contenant les données du cocktail
+         * @returns {string} HTML de la carte
+         */
+        function createCocktailCard(cocktail) {
+            return `
+                <div class="cocktail-card" data-category="${cocktail.category}">
+                    <div class="cocktail-image">
+                        <img src="images/${cocktail.code}.jpg" alt="${cocktail.name}" 
+                             onerror="this.parentElement.innerHTML='🍹'" 
+                             style="width:100%; height:100%; object-fit:cover;">
+                    </div>
+                    <div class="cocktail-content">
+                        <div class="cocktail-header">
+                            <div class="cocktail-name">${cocktail.name}</div>
+                            <div class="cocktail-code">${cocktail.code}</div>
+                        </div>
+                        ${cocktail.description ? `<p style="color:#666; font-size:0.9em; margin-bottom:10px; font-style:italic;">${cocktail.description}</p>` : ''}
+                        <div class="alcohol-level">
+                            <div class="alcohol-level-label">Niveau d'alcool</div>
+                            <div class="bottles-container">
+                                ${createBottles(cocktail.alcoholLevel)}
+                            </div>
+                        </div>
+                        <div class="ingredients">
+                            <h3>Ingrédient(s)</h3>
+                            <ul>
+                                ${cocktail.ingredients.map(ing => `<li>${ing}</li>`).join('')}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        /**
+         * Affiche les cocktails dans la grille selon le filtre
+         * @param {string} filter - Catégorie à filtrer ('all' ou nom de catégorie)
+         */
+        function displayCocktails(filter = 'all') {
+            const grid = document.getElementById('cocktailsGrid');
+            // Filtre les cocktails selon la catégorie sélectionnée
+            const filtered = filter === 'all' 
+                ? cocktails 
+                : cocktails.filter(c => c.category === filter);
+            
+            // Génère et insère le HTML de toutes les cartes filtrées
+            grid.innerHTML = filtered.map(cocktail => createCocktailCard(cocktail)).join('');
+        }
+
+        /**
+         * Filtre les cocktails par catégorie et met à jour l'interface
+         * @param {string} category - Catégorie à afficher
+         */
+        function filterCocktails(category) {
+            // Retire la classe 'active' de tous les boutons
+            const buttons = document.querySelectorAll('.filter-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            // Ajoute la classe 'active' au bouton cliqué
+            event.target.classList.add('active');
+            // Affiche les cocktails de la catégorie sélectionnée
+            displayCocktails(category);
+        }
+
+        // Affiche tous les cocktails au chargement de la page
+        displayCocktails();
+    </script>
+</body>
+</html>
